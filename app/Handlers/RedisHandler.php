@@ -38,4 +38,7 @@ class RedisHandler{
     {
         dispatch(new SynRedisEm());
     }
+    static public function  Hhx(){
+        file_put_contents('Hhx.txt' , var_export(time(), true),FILE_APPEND);
+    }
 }

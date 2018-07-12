@@ -1,0 +1,1 @@
+* * * * *usr/bin/php /home/wwwroot/email-dispatch/artisan schedule:run >> null 2>&1
