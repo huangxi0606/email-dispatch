@@ -8,7 +8,7 @@
 namespace App\Http\Controllers\Api;
 use Illuminate\Http\Request;
 
-class DeviceController extends ApiController{
+class GetEmailController extends ApiController{
        //取出email
     public function getEmail(Request $request)
     {
@@ -17,25 +17,33 @@ class DeviceController extends ApiController{
             $redis = app("redis");
             $status = $request->get("status");
             if(empty($status)){
-                return $this->error("状态不能为空");
+                $status =0;
             }
-            //找出符合条件的账号(只有email未知)
-            $email = $redis->rpop("list:email:" . $status);
-            if (!$email) {
-                return $this->error("合适的邮箱不存在");
+            $num= $request->get("num");
+            if(!$num){
+                $num =1;
+//                return $this->error("个数不能为空");
             }
-            $key = "email:" . $email;
-            $email = $redis->hgetall($key);
+            $email =[];
+            $key = "list:email:" . $status;
+            $len = $redis -> llen($key);
+            if($len==0){
+                return $this->error("邮箱已用完");
+            }
+            if($len <$num){
+                $num =$len;
+            }
+            for ($i =0 ; $i < $num ; $i ++)
+            {
+                $email[] = $redis->rpop($key);
+            }
+
             $data = [
-                'email' => $email['email'],
+                'email' => $email,
             ];
             if (count($data) == 0) {
                 return $this->error("合适的邮箱不存在");
             }
-//            $log['now_time'] = Carbon::now()->toDateTimeString();
-//            $log['email'] = $account['email'];
-//            $log['status'] = $status;
-//            $redis->hmset("old:account:" . $account['email'], $log);
             return $this->success($data);
         } catch (\Exception $e) {
             return $this->error($e->getMessage());
