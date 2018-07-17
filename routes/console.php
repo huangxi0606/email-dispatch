@@ -13,9 +13,15 @@ use Illuminate\Foundation\Inspiring;
 |
 */
 
-Artisan::command('inspire', function () {
-    $this->comment(Inspiring::quote());
-})->describe('Display an inspiring quote');
+//Artisan::command('inspire', function () {
+//    $this->comment(Inspiring::quote());
+//})->describe('Display an inspiring quote');
 Artisan::command('sync:hhx', function () {
     \App\Handlers\RedisHandler::Hhx();
 })->describe('试一试');
+Artisan::command('clear:today', function () {
+    \App\Handlers\RedisHandler::ClearToday();
+})->describe('定时清零today');
+Artisan::command('sync:today', function () {
+    \App\Handlers\RedisHandler::SyncToday();
+})->describe('同步today');

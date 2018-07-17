@@ -15,9 +15,25 @@ class ReplyEmailController extends ApiController{
         ini_set('default_socket_timeout', -1);
         try {
             $redis = app("redis");
-
-
-           //解析json
+//            $data =$request ->getContent();
+//            var_dump(9990);exit;
+            $redis = app("redis");
+            $reply =json_decode($request ->getContent());
+            foreach($reply->json as $key =>$value){
+                foreach($value as $n =>$v){
+                    //n为邮箱 v为状态
+                    //(测试为0 是否可以)
+                    //全部状态(个数)
+                    $redis->incr("count");
+                    //全部状态个数
+                    $key = "num:" . $v;
+                    $redis->incr($key);
+                    //today(定时任务0点清零)
+                    $today = "today:" . $v;
+                    $redis->incr($today);
+                    $redis->hset("email:".$n, "status", $v);
+                }
+            }
             $data = [
                 'message' => '回执成功',
             ];

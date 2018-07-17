@@ -20,5 +20,6 @@ Route::group([
 ], function () {
 
     Route::any("getEmail" , "GetEmailController@getEmail");
+    Route::any("replyEmail" , "ReplyEmailController@replyEmail");
 
 });
