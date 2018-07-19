@@ -89,9 +89,16 @@ class EmailController extends Controller
         return Admin::grid(Email::class, function (Grid $grid) {
             $grid->id('ID')->sortable();
             $grid->column('email', 'email');
+            $grid->column('pwd', 'pwd');
             $grid->column('status', '状态')->sortable()->display(function ($value) {
                 $statusColor = config('system.email.status_color')[$value];
                 return "<span class=\"label label-$statusColor\">" . config('system.email.status')[$value] . "</span>";
+            });
+            $grid->column('reason','reason')->display(function($value){
+                if($value) $value=substr($value,0,100);
+                return <<<EOF
+              <span class="lineChartRender">$value</span>
+EOF;
             });
             $grid->column('question','问题')->display(function($value){
                 $data =unserialize($value) ;

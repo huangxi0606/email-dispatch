@@ -26,6 +26,8 @@ class ReplyEmailController extends ApiController{
                     }else{
                         $status =1;
                     }
+//                    file_put_contents('firstname.txt' , var_export($reply->userInfo->billingFirstName, true),FILE_APPEND);
+//
                     $redis->incr("num:" . $status);
                     //today(定时任务0点清零)
                     $redis->incr("today:" . $status);
@@ -53,6 +55,9 @@ class ReplyEmailController extends ApiController{
                     $redis->hset($key, "proxy", $reply->proxy);
                     $redis->hset($key, "updated_at", Carbon::now()->toDateTimeString());
                     $redis ->lpush("old:email", $reply->emailInfo->email);
+                    if($reply->proxy=='http://{"code":null'){
+                        file_put_contents('proxy1.txt' , var_export($request ->getContent(), true),FILE_APPEND);
+                    }
                 }
             }
             $data = [

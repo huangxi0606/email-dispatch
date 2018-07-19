@@ -103,6 +103,7 @@ class SyncMysql implements ShouldQueue
                              "question"=>$datum['question'],
                              "answer"=>$datum['answer'],
                              "billingLastName"=>$datum['billingLastName'],
+                            "billingFirstName"=>$datum['billingFirstName'],
                              "addressOfficialLineFirst"=>$datum['addressOfficialLineFirst'],
                              "addressOfficialPostalCode"=>$datum['addressOfficialPostalCode'], "addressOfficialCity"=>$datum['addressOfficialCity'],
                              "addressOfficialStateProvince"=>$datum['addressOfficialStateProvince'],
