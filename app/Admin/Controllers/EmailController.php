@@ -15,6 +15,7 @@ use Encore\Admin\Facades\Admin;
 use Encore\Admin\Layout\Content;
 use App\Http\Controllers\Controller;
 use Encore\Admin\Controllers\ModelForm;
+use Encore\Admin\Widgets\Table;
 use Illuminate\Support\Facades\DB;
 use League\Csv\Exception;
 use League\Csv\Reader;
@@ -92,8 +93,46 @@ class EmailController extends Controller
                 $statusColor = config('system.email.status_color')[$value];
                 return "<span class=\"label label-$statusColor\">" . config('system.email.status')[$value] . "</span>";
             });
+            $grid->column('question','问题')->display(function($value){
+                $data =unserialize($value) ;
+                if($data) $value = implode(',',$data);
+                return <<<EOF
+              <span class="lineChartRender">$value</span>
+EOF;
+            });
+            $grid->column('answer','答案')->display(function($value){
+                $data =unserialize($value) ;
+                if($data) $value = implode(',',$data);
+                return <<<EOF
+              <span class="lineChartRender">$value</span>
+EOF;
+            });
             $grid->created_at('创建时间')->sortable();
             $grid->updated_at('更新时间')->sortable();
+            $grid->column('详情')->expand(function () {
+                return new Table([], [
+                    'account'=>$this->account,
+                    'pwd' => $this->pwd,
+                    'countryCode' => $this->countryCode,
+                    'lastName' => $this->lastName,
+                    'firstName' => $this->firstName,
+                    'birthYear' => $this->birthYear,
+                    'birthMonth' => $this->birthMonth,
+                    'birthDay' => $this->birthDay,
+                    'billingLastName'=>$this->billingLastName,
+                    'billingFirstName'=>$this->billingFirstName,
+                    'addressOfficialLineFirst'=>$this->addressOfficialLineFirst,
+                    'addressOfficialPostalCode'=>$this->addressOfficialPostalCode,
+                    'addressOfficialCity'=>$this->addressOfficialCity,
+                    'addressOfficialStateProvince'=>$this->addressOfficialStateProvince,
+                    'addressOfficialCountryCode'=>$this->addressOfficialCountryCode,
+                    'phoneOfficeNumber'=>$this->phoneOfficeNumber,
+                    'paymentMethodType'=>$this->paymentMethodType,
+                    'reason'=>$this->reason,
+                    'proxy' => $this->proxy,
+
+                ]);
+            });
             $grid->filter(function (Grid\Filter $filter) {
                 $filter->equal('email', 'email');
             });

@@ -24,7 +24,6 @@ class GetEmailController extends ApiController{
             if(!$num){
                 $num =1;
             }
-            $email =[];
 //            $key = "list:email:" . $status;
             $key = "list:email:0";
             $len = $redis -> llen($key);
@@ -36,15 +35,12 @@ class GetEmailController extends ApiController{
             }
             for ($i =0 ; $i <= $num ; $i ++)
             {
-                $email[] = $redis->rpop($key);
+                $email = $redis->rpop($key);
+                $hh =$redis->hgetall("email:".$email);
+                $datum[]= $hh['email'].','.$hh['password'];
             }
-            $data = [
-                'email' => $email,
-            ];
-            if (count($data) == 0) {
-                return $this->error("合适的邮箱不存在");
-            }
-            return $this->success($data);
+
+            return $this->success($datum);
         } catch (\Exception $e) {
             return $this->error($e->getMessage());
         }

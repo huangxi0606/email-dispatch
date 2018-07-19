@@ -25,3 +25,6 @@ Artisan::command('clear:today', function () {
 Artisan::command('sync:today', function () {
     \App\Handlers\RedisHandler::SyncToday();
 })->describe('同步today');
+Artisan::command('sync:tomysql', function () {
+    \App\Handlers\RedisHandler::SyncTomysql();
+})->describe('同步today');

@@ -6,6 +6,7 @@
  * Time: 16:34
  */
 namespace App\Http\Controllers\Api;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class ReplyEmailController extends ApiController{
@@ -15,23 +16,43 @@ class ReplyEmailController extends ApiController{
         ini_set('default_socket_timeout', -1);
         try {
             $redis = app("redis");
-//            $data =$request ->getContent();
-//            var_dump(9990);exit;
-            $redis = app("redis");
-            $reply =json_decode($request ->getContent());
-            foreach($reply->json as $key =>$value){
-                foreach($value as $n =>$v){
-                    //n为邮箱 v为状态
-                    //(测试为0 是否可以)
-                    //全部状态(个数)
+            $replys =json_decode(substr(urldecode($request ->getContent()),0,-1));
+            if($replys){
+                foreach ($replys as $reply){
                     $redis->incr("count");
-                    //全部状态个数
-                    $key = "num:" . $v;
-                    $redis->incr($key);
+                    $key ="email:".$reply->emailInfo->email;
+                    if($reply->result->status==false){
+                        $status =2;
+                    }else{
+                        $status =1;
+                    }
+                    $redis->incr("num:" . $status);
                     //today(定时任务0点清零)
-                    $today = "today:" . $v;
-                    $redis->incr($today);
-                    $redis->hset("email:".$n, "status", $v);
+                    $redis->incr("today:" . $status);
+                    $redis->hset($key, "status", $status);
+                    $redis->hset($key, "account", $reply->userInfo->account);
+                    $redis->hset($key, "pwd", $reply->userInfo->password);
+                    $redis->hset($key, "countryCode", $reply->userInfo->countryCode);
+                    $redis->hset($key, "lastName", $reply->userInfo->lastName);
+                    $redis->hset($key, "firstName", $reply->userInfo->firstName);
+                    $redis->hset($key, "birthYear", $reply->userInfo->birthYear);
+                    $redis->hset($key, "birthMonth", $reply->userInfo->birthMonth);
+                    $redis->hset($key, "birthDay", $reply->userInfo->birthDay);
+                    $redis->hset($key, "question", serialize($reply->userInfo->question));
+                    $redis->hset($key, "answer", serialize($reply->userInfo->answer));
+                    $redis->hset($key, "billingLastName", $reply->userInfo->billingLastName);
+                    $redis->hset($key, "billingFirstName", $reply->userInfo->billingFirstName);
+                    $redis->hset($key, "addressOfficialLineFirst", $reply->userInfo->addressOfficialLineFirst);
+                    $redis->hset($key, "addressOfficialPostalCode", $reply->userInfo->addressOfficialPostalCode);
+                    $redis->hset($key, "addressOfficialCity", $reply->userInfo->addressOfficialCity);
+                    $redis->hset($key, "addressOfficialStateProvince", $reply->userInfo->addressOfficialStateProvince);
+                    $redis->hset($key, "addressOfficialCountryCode", $reply->userInfo->addressOfficialCountryCode);
+                    $redis->hset($key, "phoneOfficeNumber", $reply->userInfo->phoneOfficeNumber);
+                    $redis->hset($key, "paymentMethodType", $reply->userInfo->paymentMethodType);
+                    $redis->hset($key, "reason", $reply->result->reason);
+                    $redis->hset($key, "proxy", $reply->proxy);
+                    $redis->hset($key, "updated_at", Carbon::now()->toDateTimeString());
+                    $redis ->lpush("old:email", $reply->emailInfo->email);
                 }
             }
             $data = [

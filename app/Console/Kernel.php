@@ -29,6 +29,7 @@ class Kernel extends ConsoleKernel
         $schedule->command('sync:hhx')->everyFiveMinutes();
         $schedule->command('clear:today')->dailyAt('0:01');
         $schedule->command('sync:today')->everyFiveMinutes();
+        $schedule->command('sync:tomysql')->everyFiveMinutes();;
     }
 
     /**

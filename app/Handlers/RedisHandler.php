@@ -7,6 +7,7 @@
  */
 namespace App\Handlers;
 
+use App\Jobs\SyncMysql;
 use App\Jobs\SynRedisEm;
 use Carbon\Carbon;
 use Encore\Admin\Config\ConfigModel;
@@ -63,4 +64,10 @@ class RedisHandler{
             DB::table("schedule")->where('created_at', '>=', $today)->where('created_at', '<=', $now)->update(["success_amount"=>$succ,"failed_amount"=>$file,"created_at"=>$now,"today_num"=>$succ+$file]);
         }
     }
+
+    static public function SyncTomysql()
+    {
+        dispatch(new SyncMysql());
+    }
+
 }

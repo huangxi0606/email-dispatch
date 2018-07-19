@@ -18,5 +18,9 @@
  *
  */
 
+
 Encore\Admin\Form::forget(['map', 'editor']);
+//Column::extend('expand', \App\Admin\Extensions\Column\ExpandRow::class);
+\Encore\Admin\Grid\Column::extend('expand', \App\Admin\Extensions\Column\ExpandRow::class);
 Admin::js('/vendor/layer/layer/layer.js');
+app('view')->prependNamespace('admin', resource_path('views/admin'));
